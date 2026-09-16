@@ -449,7 +449,9 @@ class NPUARModelRunner(OmniNPUModelRunner, OmniConnectorModelRunnerMixin, Duplex
                 flush_ids = set(getattr(scheduler_output, "finished_req_ids", set()))
                 flush_ids.update({rid for rid in self._pending_full_payload_send if rid not in self.requests})
                 if flush_ids:
-                    self.flush_full_payload_outputs(flush_ids)
+                    self.flush_full_payload_outputs(
+                        flush_ids, discarded_req_ids=getattr(scheduler_output, "discarded_req_ids", set())
+                    )
 
         if self.omni_prefix_cache is not None and scheduler_output.finished_req_ids:
             self.omni_prefix_cache.commit_deferred_mm_outputs(
@@ -1264,7 +1266,15 @@ class NPUARModelRunner(OmniNPUModelRunner, OmniConnectorModelRunnerMixin, Duplex
                 for i, rid in enumerate(req_ids_output_copy):
                     req_state = self.requests.get(rid)
                     if req_state is not None and pooler_inter[i]:
-                        self.accumulate_full_payload_output(rid, pooler_inter[i], req_state)
+                        self.accumulate_full_payload_output(
+                            rid,
+                            pooler_inter[i],
+                            req_state,
+                            token_range=(
+                                req_state.num_computed_tokens,
+                                req_state.num_computed_tokens + scheduler_output.num_scheduled_tokens[rid],
+                            ),
+                        )
 
         inter_stage_outputs = self._build_multimodal_outputs(pooler_inter)
         multimodal_outputs = (
