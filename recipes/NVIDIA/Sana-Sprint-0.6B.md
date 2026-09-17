@@ -1,4 +1,4 @@
-# Sana-Sprint 0.6B — RTX 5080
+# Sana-Sprint 0.6B
 
 ## Summary
 
@@ -6,7 +6,7 @@
 - Model: `Efficient-Large-Model/Sana_Sprint_0.6B_1024px_diffusers`.
 - Runtime: native vLLM-Omni; BF16, one worker, TP=SP=CFG=PP=1.
 - Task: text-to-image, offline and online.
-- Hardware: one NVIDIA GeForce RTX 5080, 16 GB, PCIe.
+- Validated hardware: one NVIDIA GeForce RTX 5080, 16 GB, PCIe.
 - Maintainer: [@Bezdarnost](https://github.com/Bezdarnost).
 
 ## Supported model contract
